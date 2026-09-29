@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { Client, RichPresence, CustomStatus } = require('discord.js-selfbot-v13');
+const { Client, CustomStatus } = require('discord.js-selfbot-v13');
 
 // Web server giữ Render chạy 24/7
 app.get('/', (req, res) => {
@@ -16,7 +16,7 @@ const client = new Client({ checkUpdate: false });
 client.on('ready', async () => {
     console.log(`Đã đăng nhập thành công vào tài khoản: ${client.user.tag}`);
 
-    // Xóa dòng Custom Status bong bóng trên avatar
+    // Xóa Custom Status bong bóng trên avatar
     try {
         const custom = new CustomStatus(client);
         await client.user.setCustomStatus(custom);
@@ -24,23 +24,29 @@ client.on('ready', async () => {
         // Bỏ qua nếu status trống
     }
 
-    // Tạo Rich Presence dùng App ID ảo hỗ trợ hiển thị ảnh URL
-    const getPresence = new RichPresence(client)
-        .setApplicationId('1109438914690322432') 
-        .setType('PLAYING')
-        .setName('Visual Studio Code')
-        .setDetails('👑 xVincent | 🛠 Developer')
-        .setState('✦✦✦✦✦✧✧✧✧✧')
-        .setStartTimestamp(1755137373)
-        .setAssetsLargeImage('https://raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_vscode.png')
-        .setAssetsLargeText('Visual Studio Code')
-        .setAssetsSmallImage('https://raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_vscode.png')
-        .setAssetsSmallText('VS Code')
-        .addButton('༺𓆩 -ˏ` Discord ༻𓆩', 'https://discord.gg/RpryjFGDqs');
-
+    // Thiết lập Rich Presence bằng Activity JSON trực tiếp (Chống lỗi INVALID_URL 100%)
     client.user.setPresence({
-        activities: [getPresence],
-        status: 'online'
+        activities: [{
+            name: "Visual Studio Code",
+            type: "PLAYING",
+            application_id: "356888700030582784", // App ID chính thức của VS Code
+            details: "👑 xVincent | 🛠 Developer",
+            state: "✦✦✦✦✦✧✧✧✧✧",
+            timestamps: { start: 1755137373 },
+            assets: {
+                large_image: "356888700030582784", // Asset ID chính thức từ Discord cho logo VS Code
+                large_text: "Visual Studio Code",
+                small_image: "356888700030582784",
+                small_text: "VS Code"
+            },
+            buttons: [
+                "༺𓆩 -ˏ` Discord ༻𓆩"
+            ],
+            metadata: {
+                button_urls: ["https://discord.gg/RpryjFGDqs"]
+            }
+        }],
+        status: "online"
     });
 });
 
