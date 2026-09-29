@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const { Client, CustomStatus } = require('discord.js-selfbot-v13');
 
-// Web server giữ Render chạy 24/7
+// 1. Web server duy trì Render 24/7
 app.get('/', (req, res) => {
     res.send('Rich Presence đang hoạt động!');
 });
@@ -11,12 +11,13 @@ app.listen(process.env.PORT || 3000, () => {
     console.log('Server Web đã mở!');
 });
 
+// 2. Client Discord Selfbot
 const client = new Client({ checkUpdate: false });
 
 client.on('ready', async () => {
     console.log(`Đã đăng nhập thành công vào tài khoản: ${client.user.tag}`);
 
-    // Xóa Custom Status bong bóng trên avatar
+    // Xóa Custom Status (status dạng bong bóng trên avatar)
     try {
         const custom = new CustomStatus(client);
         await client.user.setCustomStatus(custom);
@@ -24,19 +25,20 @@ client.on('ready', async () => {
         // Bỏ qua nếu status trống
     }
 
-    // Thiết lập Rich Presence bằng Activity JSON trực tiếp (Chống lỗi INVALID_URL 100%)
+    // Thiết lập Rich Presence với link CDN Discord đã qua xử lý
     client.user.setPresence({
         activities: [{
             name: "Visual Studio Code",
             type: "PLAYING",
-            application_id: "356888700030582784", // App ID chính thức của VS Code
+            application_id: "1098602283921313883", // App ID mở hỗ trợ hiển thị ảnh custom
             details: "👑 xVincent | 🛠 Developer",
             state: "✦✦✦✦✦✧✧✧✧✧",
             timestamps: { start: 1755137373 },
             assets: {
-                large_image: "356888700030582784", // Asset ID chính thức từ Discord cho logo VS Code
+                // Link CDN chính thức logo VS Code trên Discord
+                large_image: "mp:external/44xK8I0C9B6Kj7N4E8J2G/https/raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_vscode.png",
                 large_text: "Visual Studio Code",
-                small_image: "356888700030582784",
+                small_image: "mp:external/44xK8I0C9B6Kj7N4E8J2G/https/raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_vscode.png",
                 small_text: "VS Code"
             },
             buttons: [
