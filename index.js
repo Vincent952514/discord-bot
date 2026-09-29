@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
-const { Client, RichPresence } = require('discord.js-selfbot-v13');
+const { Client, RichPresence, CustomStatus } = require('discord.js-selfbot-v13');
 
-// Web server giữ Render hoạt động 24/7
+// 1. Web server duy trì Render 24/7
 app.get('/', (req, res) => {
     res.send('Rich Presence đang hoạt động!');
 });
@@ -11,23 +11,34 @@ app.listen(process.env.PORT || 3000, () => {
     console.log('Server Web đã mở!');
 });
 
+// 2. Client Discord
 const client = new Client({ checkUpdate: false });
 
 client.on('ready', async () => {
     console.log(`Đã đăng nhập thành công vào tài khoản: ${client.user.tag}`);
 
-    // Dùng Application ID chính thức của VS Code
+    // XÓA HẲN STATUS BONG BÓNG TRÊN AVATAR
+    try {
+        const custom = new CustomStatus(client);
+        await client.user.setCustomStatus(custom);
+    } catch (e) {
+        // Bỏ qua nếu đã trống
+    }
+
+    // TẠO KHUNG RICH PRESENCE ĐẦY ĐỦ LOGO VS CODE
     const getPresence = new RichPresence(client)
-        .setApplicationId('356888700030582784') 
+        .setApplicationId('356888700030582784') // App ID chính thức của VS Code trên Discord
         .setType('PLAYING')
         .setName('Visual Studio Code')
         .setDetails('👑 xVincent | 🛠 Developer')
         .setState('✦✦✦✦✦✧✧✧✧✧')
         .setStartTimestamp(1755137373)
-        // Link ảnh đã qua định dạng mp:external chuẩn selfbot
-        .setAssetsLargeImage('mp:external/v2L9g4M_xGj5g5R8Kx4z8G9_N1x-V5Xz/https/i.imgur.com/8N4820s.png')
+        // Icon VS Code lớn & nhỏ
+        .setAssetsLargeImage('vscode') 
         .setAssetsLargeText('Visual Studio Code')
-        .addButton('༺𓆩 -ˏ` Discord ༻𓆩', 'https://discord.gg/RpryjFGDqs');
+        .setAssetsSmallImage('vscode')
+        .setAssetsSmallText('VS Code')
+        .addButton(' -ˏ` Discord ', 'https://discord.gg/RpryjFGDqs');
 
     client.user.setPresence({
         activities: [getPresence],
