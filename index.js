@@ -38,7 +38,7 @@ client.on('ready', async () => {
                 small_text: "VS Code"
             },
             buttons: [
-                "༺𓆩 -ˏ` Discord ༻𓆩"
+                "Discord"
             ],
             metadata: {
                 button_urls: ["https://discord.gg/RpryjFGDqs"]
