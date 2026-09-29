@@ -1,17 +1,38 @@
+const express = require('express');
+const app = express();
+const { Client, RichPresence, CustomStatus } = require('discord.js-selfbot-v13');
+
+// Web server giữ Render chạy 24/7
+app.get('/', (req, res) => {
+    res.send('Rich Presence đang hoạt động!');
+});
+
+app.listen(process.env.PORT || 3000, () => {
+    console.log('Server Web đã mở!');
+});
+
+const client = new Client({ checkUpdate: false });
+
 client.on('ready', async () => {
     console.log(`Đã đăng nhập thành công vào tài khoản: ${client.user.tag}`);
 
-    // Dùng RichPresence Builder
+    // Xóa dòng Custom Status bong bóng trên avatar
+    try {
+        const custom = new CustomStatus(client);
+        await client.user.setCustomStatus(custom);
+    } catch (e) {
+        // Bỏ qua nếu status trống
+    }
+
+    // Tạo Rich Presence dùng App ID ảo hỗ trợ hiển thị ảnh URL
     const getPresence = new RichPresence(client)
-        // THAY ID NÀY: Dùng ID của App ảo để ép ảnh URL
         .setApplicationId('1109438914690322432') 
         .setType('PLAYING')
         .setName('Visual Studio Code')
         .setDetails('👑 xVincent | 🛠 Developer')
         .setState('✦✦✦✦✦✧✧✧✧✧')
         .setStartTimestamp(1755137373)
-        // Sử dụng Link ảnh URL xịn của VS Code
-        .setAssetsLargeImage('https://raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_vscode.png') 
+        .setAssetsLargeImage('https://raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_vscode.png')
         .setAssetsLargeText('Visual Studio Code')
         .setAssetsSmallImage('https://raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_vscode.png')
         .setAssetsSmallText('VS Code')
@@ -22,3 +43,5 @@ client.on('ready', async () => {
         status: 'online'
     });
 });
+
+client.login(process.env.DISCORD_TOKEN);
